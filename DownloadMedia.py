@@ -12,8 +12,8 @@ class ParlViewClient:
         metadataResponse = requests.get('http://parlview.aph.gov.au/player/config5.php?siteID=1&videoID={videoId}&profileIdx=30&ts2=1528111836852'.format(videoId=videoId))
         root = etree.fromstring(metadataResponse.content)
         duration = root.find('playlist/media/info/duration').text
-        created_date = dateutil.parser(root.find('playlist/module/media_area/bookmark/created'))
-        modified_date = dateutil.parser(root.find('playlist/module/media_area/bookmark/modified'))
+        created_date = dateutil.parser(root.find('playlist/media/module/media_area/bookmark/created'))
+        modified_date = dateutil.parser(root.find('playlist/media/module/media_area/bookmark/modified'))
         return {'duration': duration, 'created_date': created_date, 'modified_date': modified_date}
 
     def download(self, videoId, duration, directory='.'):
