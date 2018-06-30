@@ -9,7 +9,7 @@ import DownloadMedia
 import Rss
 
 logging.basicConfig(level=logging.DEBUG)
-feeds = [('all', 'http://parlview.aph.gov.au/browse.php?&rss=1')]
+feeds = [{'name':'all', 'url':'http://parlview.aph.gov.au/browse.php?&rss=1'}]
 
 # temp directory
 workingDir = tempfile.mkdtemp(prefix='parlpod')
@@ -33,7 +33,10 @@ httpPrefix = options.http_prefix
 
 amazon = Amazon.Amazon(bucketName)
 # Download RSS Feeds
-podcastItems = [Rss.getTitleAndVideoIds(feed[1]) for feed in feeds]
+reader = Rss.RssReader()
+podcastItems = [reader.getTitleAndVideoIds(feed['url']) for feed in feeds]
+
+
 # Combine list of video IDs
 videoIds = [item[1] for item in itertools.chain.from_iterable(podcastItems)]
 logging.debug('VideoIDs: %s', ", ".join(videoIds))
@@ -44,12 +47,20 @@ missingVideoIds = videoIds
 
 # Download missing video IDs
 logging.debug('Downloading: %s', ", ".join(videoIds))
+client = DownloadMedia.ParlViewClient()
+videoMetadata = {}
 for videoId in missingVideoIds:
-    DownloadMedia.download(videoId, os.path.join(workingDir, 'media'))
+    metadata = client.getMetadata(videoId)
+    client.download(videoId, metadata['duration'], os.path.join(workingDir, 'media'))
+    videoMetadata[videoId] = metadata
+
+#TODO: verify date and use modified_date if available
+podcastItems = [[{'title': item['title'], 'video_id': item['video_id'], 'date': videoMetadata[item['video_id']]['created_date']} for item in podcast] for podcast in podcastItems]
 
 # Generate RSS files
 for podcast in zip(podcastItems, feeds):
-    Rss.generateFeed(podcast[0], httpPrefix, podcast[1][0], os.path.join(workingDir, 'rss'))
+    writer = Rss.RssWriter(httpPrefix, os.path.join(workingDir, 'rss'))
+    writer.generateFeed(podcast[0], podcast[1]['name'])
 
 if not options.dry_run:
     # Upload media files
@@ -57,6 +68,6 @@ if not options.dry_run:
 
     # Upload RSS files
     for feed in feeds:
-        amazon.uploadRss(os.path.join(workingDir, 'rss', feed[0]+".xml"))
+        amazon.uploadRss(os.path.join(workingDir, 'rss', feed['name']+".xml"))
 
 # TODO: Delete temp directory
