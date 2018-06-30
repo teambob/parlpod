@@ -21,7 +21,7 @@ class RssWriter:
 
     def __createItem(self, item):
         link = self.urlPrefix + 'media/' + item['video_id'] + '.m4a'
-        return rfeed.Item(title=item['title'], link=link, guid=link, pubDate=item['date'])
+        return rfeed.Item(title=item['title'], link=link, guid=rfeed.Guid(link), pubDate=item['date'])
 
     def generateFeed(self, podcast, feedName):
 
