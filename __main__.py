@@ -38,7 +38,7 @@ podcastItems = [reader.getTitleAndVideoIds(feed['url']) for feed in feeds]
 
 
 # Combine list of video IDs
-videoIds = [item[1] for item in itertools.chain.from_iterable(podcastItems)]
+videoIds = [item['video_id'] for item in itertools.chain.from_iterable(podcastItems)]
 logging.debug('VideoIDs: %s', ", ".join(videoIds))
 
 # Check which video IDs have already been downloaded
