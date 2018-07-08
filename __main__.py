@@ -8,7 +8,7 @@ import Amazon
 import DownloadMedia
 import Rss
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 feeds = [{'name':'all', 'url':'http://parlview.aph.gov.au/browse.php?&rss=1'}]
 
 # temp directory
