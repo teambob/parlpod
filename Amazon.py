@@ -1,4 +1,5 @@
 import boto3
+import botocore.errorfactory
 import os
 
 class Amazon:
@@ -6,9 +7,15 @@ class Amazon:
         self.s3 = boto3.client("s3")
         self.bucketName = bucketName
 
+    def __checkVideoId(self, videoId):
+        try:
+            self.s3.head_object(Bucket=self.bucketName, Key='media/{videoId}.m4a'.format(videoId=videoId))
+            return True
+        except botocore.errorfactory.ClientError:
+            return False
 
     def checkVideoIds(self, videoIds):
-        return videoIds
+        return [videoId for videoId in videoIds if self.__checkVideoId(videoId)]
 
 
     def uploadMedia(self, filenames):

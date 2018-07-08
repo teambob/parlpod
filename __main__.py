@@ -42,8 +42,7 @@ videoIds = [item['video_id'] for item in itertools.chain.from_iterable(podcastIt
 logging.debug('VideoIDs: %s', ", ".join(videoIds))
 
 # Check which video IDs have already been downloaded
-# TODO: where will this data be stored?
-missingVideoIds = videoIds
+missingVideoIds = amazon.checkVideoIds(videoIds)
 
 # Download missing video IDs
 logging.debug('Downloading: %s', ", ".join(videoIds))
