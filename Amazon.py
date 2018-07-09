@@ -1,5 +1,5 @@
 import boto3
-import botocore.errorfactory
+import botocore.exceptions
 import os
 
 class Amazon:
@@ -11,7 +11,7 @@ class Amazon:
         try:
             self.s3.head_object(Bucket=self.bucketName, Key='media/{videoId}.m4a'.format(videoId=videoId))
             return True
-        except botocore.errorfactory.ClientError:
+        except botocore.exceptions.ClientError:
             return False
 
     def checkVideoIds(self, videoIds):
