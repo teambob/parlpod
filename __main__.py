@@ -48,9 +48,10 @@ missingVideoIds = amazon.checkVideoIds(videoIds)
 logging.debug('Downloading: %s', ", ".join(videoIds))
 client = DownloadMedia.ParlViewClient()
 videoMetadata = {}
-for videoId in missingVideoIds:
+for videoId in videoIds:
     metadata = client.getMetadata(videoId)
-    client.download(videoId, metadata['duration'], os.path.join(workingDir, 'media'))
+    if videoId in missingVideoIds:
+        client.download(videoId, metadata['duration'], os.path.join(workingDir, 'media'))
     videoMetadata[videoId] = metadata
 
 #TODO: verify date and use modified_date if available
