@@ -64,7 +64,7 @@ for podcast in zip(podcastItems, feeds):
 
 if not options.dry_run:
     # Upload media files
-    amazon.uploadMedia([os.path.join(workingDir, 'media', videoId+".m4a") for videoId in videoIds])
+    amazon.uploadMedia([os.path.join(workingDir, 'media', videoId+".m4a") for videoId in missingVideoIds])
 
     # Upload RSS files
     for feed in feeds:
