@@ -5,9 +5,9 @@ import os
 import shutil
 import tempfile
 
-from . import Amazon
-from . import Rss
-from . import DownloadMedia
+import Amazon
+import Rss
+import DownloadMedia
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 feeds = [{'name':'all', 'url':'http://parlview.aph.gov.au/browse.php?&rss=1'}]
