@@ -1,12 +1,13 @@
+import argparse
 import itertools
 import logging
-import argparse
 import os
+import shutil
 import tempfile
 
-import Amazon
-import DownloadMedia
-import Rss
+from . import Amazon
+from . import Rss
+from . import DownloadMedia
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 feeds = [{'name':'all', 'url':'http://parlview.aph.gov.au/browse.php?&rss=1'}]
@@ -70,4 +71,7 @@ if not options.dry_run:
     for feed in feeds:
         amazon.uploadRss(os.path.join(workingDir, 'rss', feed['name']+".xml"))
 
-# TODO: Delete temp directory
+# Delete temp directory
+
+if len(workingDir)>0 and workingDir != '/':
+    shutil.rmtree(workingDir)
