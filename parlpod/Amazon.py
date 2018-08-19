@@ -15,7 +15,7 @@ class Amazon:
             return False
 
     def checkVideoIds(self, videoIds):
-        return [videoId for videoId in videoIds if self.__checkVideoId(videoId)]
+        return [videoId for videoId in videoIds if not self.__checkVideoId(videoId)]
 
 
     def uploadMedia(self, filenames):

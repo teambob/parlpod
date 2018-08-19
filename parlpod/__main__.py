@@ -46,7 +46,7 @@ logging.debug('VideoIDs: %s', ", ".join(videoIds))
 missingVideoIds = amazon.checkVideoIds(videoIds)
 
 # Download missing video IDs
-logging.debug('Downloading: %s', ", ".join(videoIds))
+logging.debug('Downloading: %s', ", ".join(missingVideoIds))
 client = DownloadMedia.ParlViewClient()
 videoMetadata = {}
 for videoId in videoIds:

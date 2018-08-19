@@ -17,6 +17,7 @@ class ParlViewClient:
         return {'duration': duration, 'created_date': created_date, 'modified_date': modified_date}
 
     def download(self, videoId, duration, directory='.'):
+        logging.info("Downloading videoId: %s", videoId)
 
         random.seed()
         trimId = random.randrange(2**32)
@@ -29,7 +30,6 @@ class ParlViewClient:
         #duration from XML in previous request
         download = None
         while True:
-            logging.info("Downloading")
             try:
                 download = requests.get('http://download.parlview.aph.gov.au/downloads/trim.php?mux=0&siteID=1&type=mp4_aud&videoID={videoId}&from=0&to={duration}&R={trimId}&action=directDownload'.format(videoId=videoId, duration=duration, trimId=trimId))
             except requests.exceptions.RequestException as e:
