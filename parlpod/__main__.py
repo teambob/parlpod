@@ -1,77 +1,15 @@
 import argparse
-import itertools
-import logging
-import os
-import shutil
-import tempfile
-
-import Amazon
-import Rss
-import DownloadMedia
-
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-feeds = [{'name':'all', 'url':'http://parlview.aph.gov.au/browse.php?&rss=1'}]
-
-# temp directory
-workingDir = tempfile.mkdtemp(prefix='parlpod')
-# create temp subdirectories
-os.mkdir(os.path.join(workingDir, 'media'))
-os.mkdir(os.path.join(workingDir, 'rss'))
-
-# configuration
-parser = argparse.ArgumentParser()
-
-parser.add_argument('--bucket', required=True)
-parser.add_argument('--http-prefix', required=True)
-parser.add_argument('--dry-run', action='store_true')
-
-options = parser.parse_args()
-
-bucketName = options.bucket
-httpPrefix = options.http_prefix
+from __init__ import run
 
 
+if __name__=='__main__':
+    # configuration
+    parser = argparse.ArgumentParser()
 
-amazon = Amazon.Amazon(bucketName)
-# Download RSS Feeds
-reader = Rss.RssReader()
-podcastItems = [reader.getTitleAndVideoIds(feed['url']) for feed in feeds]
+    parser.add_argument('--bucket', required=True)
+    parser.add_argument('--http-prefix', required=True)
+    parser.add_argument('--dry-run', action='store_true')
 
+    options = parser.parse_args()
 
-# Combine list of video IDs
-videoIds = [item['video_id'] for item in itertools.chain.from_iterable(podcastItems)]
-logging.debug('VideoIDs: %s', ", ".join(videoIds))
-
-# Check which video IDs have already been downloaded
-missingVideoIds = amazon.checkVideoIds(videoIds)
-
-# Download missing video IDs
-logging.debug('Downloading: %s', ", ".join(missingVideoIds))
-client = DownloadMedia.ParlViewClient()
-videoMetadata = {}
-for videoId in videoIds:
-    metadata = client.getMetadata(videoId)
-    if videoId in missingVideoIds:
-        client.download(videoId, metadata['duration'], os.path.join(workingDir, 'media'))
-    videoMetadata[videoId] = metadata
-
-#TODO: verify date and use modified_date if available
-podcastItems = [[{'title': item['title'], 'video_id': item['video_id'], 'date': videoMetadata[item['video_id']]['created_date']} for item in podcast] for podcast in podcastItems]
-
-# Generate RSS files
-for podcast in zip(podcastItems, feeds):
-    writer = Rss.RssWriter(httpPrefix, os.path.join(workingDir, 'rss'))
-    writer.generateFeed(podcast[0], podcast[1]['name'])
-
-if not options.dry_run:
-    # Upload media files
-    amazon.uploadMedia([os.path.join(workingDir, 'media', videoId+".m4a") for videoId in missingVideoIds])
-
-    # Upload RSS files
-    for feed in feeds:
-        amazon.uploadRss(os.path.join(workingDir, 'rss', feed['name']+".xml"))
-
-# Delete temp directory
-
-if len(workingDir)>0 and workingDir != '/':
-    shutil.rmtree(workingDir)
+    run(options.bucket, options.http_prefix, options.dry_run)
