@@ -1,5 +1,6 @@
 import boto3
 import botocore.exceptions
+import logging
 import os
 
 class Amazon:
@@ -20,6 +21,7 @@ class Amazon:
 
     def uploadMedia(self, filenames):
         for filename in filenames:
+            logging.debug("Uploading {filename}".format(filename=filename))
             self.s3.upload_file(Filename=filename, Bucket=self.bucketName, Key='media/{basename}'.format(basename=os.path.basename(filename)))
 
     def uploadRss(self, filename):

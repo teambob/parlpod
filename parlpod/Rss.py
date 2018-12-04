@@ -26,7 +26,7 @@ class RssWriter:
     def generateFeed(self, podcast, feedName):
 
         items = [self.__createItem(item) for item in podcast]
-        feed = rfeed.Feed(title='Non-official podcast of the Parliament of Australia', description='Non-official podcast of the Parliament of Australia', link='https://parlpod.datapunch.net', items=items)
+        feed = rfeed.Feed(title='Parliament of Australia Podcast (Non-Official)', description='Parliament of Australia Podcast (Non-Official)', link='https://parlpod.datapunch.net', items=items)
         with open(os.path.join(self.directory, feedName+'.xml'), 'w') as f:
             f.write(feed.rss())
 

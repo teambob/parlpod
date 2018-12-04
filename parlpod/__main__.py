@@ -1,6 +1,5 @@
 import argparse
-from __init__ import run
-
+from . import run
 
 if __name__=='__main__':
     # configuration

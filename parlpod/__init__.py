@@ -5,17 +5,34 @@ import os
 import shutil
 import tempfile
 
-import Amazon
-import Rss
-import DownloadMedia
+__all__ = ['Amazon', 'Rss', 'DownloadMedia']
+
+from . import Amazon
+from . import Rss
+from . import DownloadMedia
+
+#import Amazon
+#import Rss
+#import DownloadMedia
 
 def lambda_handler(event, context):
-    run(os.getenv('BUCKET_NAME'), os.getenv('HTTP_PREFIX'))
+    root = logging.getLogger()
+    if root.handlers:
+        for handler in root.handlers:
+            root.removeHandler(handler)
+    run(os.getenv('BUCKET_NAME'), os.getenv('HTTP_PREFIX'), False)
 
 def run(bucketName, httpPrefix, dryRun):
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-    feeds = [{'name': 'all', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1'}]
+    feeds = [
+        {'name': 'all', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1'},
+        {'name': 'senate', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1&tab=senate'},
+        {'name': 'house_of_representatives', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1&tab=hor'},
+        {'name': 'committees', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1&tab=joint_comm'},
+        {'name': 'press_conferences', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1&tab=press_conf'},
+        {'name': 'other', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1&tab=other'},
+    ]
 
     # temp directory
     workingDir = tempfile.mkdtemp(prefix='parlpod')
@@ -35,7 +52,7 @@ def run(bucketName, httpPrefix, dryRun):
     logging.debug('VideoIDs: %s', ", ".join(videoIds))
 
     # Check which video IDs have already been downloaded
-    missingVideoIds = amazon.checkVideoIds(videoIds)
+    missingVideoIds = list(set(videoIds).difference(amazon.checkVideoIds(videoIds)))
 
     # Download missing video IDs
     logging.debug('Downloading: %s', ", ".join(videoIds))
@@ -45,6 +62,13 @@ def run(bucketName, httpPrefix, dryRun):
         metadata = client.getMetadata(videoId)
         if videoId in missingVideoIds:
             client.download(videoId, metadata['duration'], os.path.join(workingDir, 'media'))
+            if not dryRun:
+                # Upload media files
+                filename = os.path.join(workingDir, 'media', videoId + ".m4a")
+                amazon.uploadMedia([filename])
+                #TODO: Only remove if lambda
+                os.remove(filename)
+
         videoMetadata[videoId] = metadata
 
     #TODO: verify date and use modified_date if available
@@ -56,9 +80,6 @@ def run(bucketName, httpPrefix, dryRun):
         writer.generateFeed(podcast[0], podcast[1]['name'])
 
     if not dryRun:
-        # Upload media files
-        amazon.uploadMedia([os.path.join(workingDir, 'media', videoId+".m4a") for videoId in missingVideoIds])
-
         # Upload RSS files
         for feed in feeds:
             amazon.uploadRss(os.path.join(workingDir, 'rss', feed['name']+".xml"))
