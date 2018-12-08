@@ -15,8 +15,14 @@ class Amazon:
         except botocore.exceptions.ClientError:
             return False
 
+    def __getS3VideoIds(self):
+        return [os.path.splitext(os.path.basename(path['Key']))[0] for path in self.s3.list_objects_v2(Bucket=self.bucketName, Prefix='media/').get('Contents', list())]
+
     def checkVideoIds(self, videoIds):
-        return [videoId for videoId in videoIds if not self.__checkVideoId(videoId)]
+        s3VideoIds = self.__getS3VideoIds()
+        logging.info("s3VideoIds: %s", ",".join(s3VideoIds))
+        return list(set(videoIds).intersection(s3VideoIds))
+        #return [videoId for videoId in videoIds if not self.__checkVideoId(videoId)]
 
 
     def uploadMedia(self, filenames):
