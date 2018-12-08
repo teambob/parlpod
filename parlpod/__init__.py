@@ -20,10 +20,10 @@ def lambda_handler(event, context):
     if root.handlers:
         for handler in root.handlers:
             root.removeHandler(handler)
-    run(os.getenv('BUCKET_NAME'), os.getenv('HTTP_PREFIX'), False)
+    run(os.getenv('BUCKET_NAME'), os.getenv('HTTP_PREFIX'), False, os.getenv('LOG_LEVEL', logging.INFO))
 
-def run(bucketName, httpPrefix, dryRun):
-    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
+def run(bucketName, httpPrefix, dryRun, logLevel):
+    logging.basicConfig(level=logLevel, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
     feeds = [
         {'name': 'all', 'url': 'http://parlview.aph.gov.au/browse.php?&rss=1'},
@@ -55,7 +55,8 @@ def run(bucketName, httpPrefix, dryRun):
     missingVideoIds = list(set(videoIds).difference(amazon.checkVideoIds(videoIds)))
 
     # Download missing video IDs
-    logging.debug('Downloading: %s', ", ".join(videoIds))
+    logging.info('VideoIds required: %s', ', '.join(videoIds))
+    logging.info('VideoIds to download: %s', ', '.join(missingVideoIds))
     client = DownloadMedia.ParlViewClient()
     videoMetadata = {}
     for videoId in videoIds:

@@ -1,4 +1,5 @@
 import argparse
+import logging
 from . import run
 
 if __name__=='__main__':
@@ -8,7 +9,8 @@ if __name__=='__main__':
     parser.add_argument('--bucket', required=True)
     parser.add_argument('--http-prefix', required=True)
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--log-level', default=logging.INFO)
 
     options = parser.parse_args()
 
-    run(options.bucket, options.http_prefix, options.dry_run)
+    run(options.bucket, options.http_prefix, options.dry_run, options.log_level)
