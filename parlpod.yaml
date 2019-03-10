@@ -99,8 +99,14 @@ Resources:
                                 "Next": "ParlpodDownloadState"
                             }
                         ],
-                        "Default": "Done"
+                        "Default": "ParlpodCreateRss"
                     },
+                    "ParlpodCreateRss": {
+                        "Type": "Task",
+                        "Resource": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:ParlpodCreateRss",
+                        "Next": "Done"
+                    },
+
                     "Done": {
                         "Type": "Pass",
                         "End": true

@@ -1,6 +1,6 @@
 import argparse
 import logging
-from . import run
+from . import Parlpod
 
 if __name__=='__main__':
     # configuration
@@ -13,4 +13,5 @@ if __name__=='__main__':
 
     options = parser.parse_args()
 
-    run(options.bucket, options.http_prefix, options.dry_run, options.log_level)
+    parlpod = Parlpod(options.bucket, options.http_prefix, options.dry_run, options.log_level)
+    parlpod.run()
