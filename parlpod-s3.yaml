@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Deploy parlpod roles to AWS"
+Parameters:
+  ParlpodBucketnameParameter:
+    Type: String
+    Default: dev-parlpod.datapunch.net
+Resources:
+  ParlpodBucket:
+    Type: "AWS::S3::Bucket"
+    BucketName:
+      Ref: ParlpodBucketnameParameter
+    AccessControl: PublicRead
+    WebsiteConfiguration:
+      IndexDocument: index.html
+  ParlpodBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: "ParlpodBucket"
+      PolicyDocument:
+        Statement:
+          - Sid: Stmt1552298486748
+            Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: { "Fn::Join": ["", ["arn:aws:s3:::", {Ref: ParlpodBucketnameParameter}, "/*"]]}

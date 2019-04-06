@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Deploy parlpod roles to AWS"
+Parameters:
+  ParlpodBucketnameParameter:
+    Type: String
+    Default: dev-parlpod.datapunch.net
+Resources:
+  ParlpodServiceRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "ParlpodServiceRole"
+      Policies:
+        -
+          PolicyName: "ParlpodServicePolicy"
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Sid: VisualEditor0
+              Effect: Allow
+              Action:
+              - s3:PutAccountPublicAccessBlock
+              - s3:GetAccountPublicAccessBlock
+              - xray:PutTelemetryRecords
+              - s3:ListAllMyBuckets
+              - s3:HeadBucket
+              - xray:CreateGroup
+              - logs:CreateLogGroup
+              - xray:PutTraceSegments
+              Resource: "*"
+            - Sid: VisualEditor1
+              Effect: Allow
+              Action:
+              - logs:CreateLogStream
+              - logs:DescribeLogGroups
+              - logs:DescribeLogStreams
+              - logs:PutLogEvents
+              Resource: arn:aws:logs:*:*:log-group:*
+            - Sid: VisualEditor2
+              Effect: Allow
+              Action: logs:PutLogEvents
+              Resource: arn:aws:logs:*:*:log-group:*:*:*
+            - Sid: VisualEditor3
+              Effect: Allow
+              Action: s3:*
+              Resource:
+              - {"Fn::Join": ["", ["arn:aws:s3:::", {Ref: ParlpodBucketnameParameter}]]}
+              - {"Fn::Join": ["", ["arn:aws:s3:::", {Ref: ParlpodBucketnameParameter}, "/*"]]}
+  ParlpodStatesRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "ParlpodStatesRole"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action:
+          - lambda:InvokeFunction
+          Resource:
+          - "arn:aws:lambda:::function:Parlpod*"
