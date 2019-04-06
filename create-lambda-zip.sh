@@ -8,14 +8,12 @@ then
   rm -- "$filename"
 fi
 
-if [ ! -d "dist" ]
-then
-  mkdir "dist"
-fi
-
-pip3 install --system --target $PWD/dist/ -r requirements.txt
+python3 -m venv dist
+source dist/bin/activate
+pip3 install -r requirements.txt
+deactivate
 
 zip "$filename" -r parlpod
 
-cd dist
+cd dist/lib/python3*/site-packages/
 zip "$filename" -r .
