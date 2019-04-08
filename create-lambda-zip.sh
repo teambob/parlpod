@@ -8,12 +8,19 @@ then
   rm -- "$filename"
 fi
 
+
 python3 -m venv dist
 source dist/bin/activate
 pip3 install -r requirements.txt
 deactivate
 
-zip "$filename" -r parlpod
+PACKAGES=$(echo dist/lib/python3*/site-packages/)
+if [ ! -d "$PACKAGES" ]
+then
+	echo "Error: directory $PACKAGES does not exist"
+	exit 1
+fi
 
-cd dist/lib/python3*/site-packages/
+cp -r parlpod "$PACKAGES"
+cd "$PACKAGES"
 zip "$filename" -r .
