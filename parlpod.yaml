@@ -39,7 +39,7 @@ Resources:
       FunctionName: ParlpodGetList
       Handler: parlpod.lambda_get_list
       MemorySize: 1024
-      Role: { "Fn::Sub": "arn:aws:iam::${AWS:AccountId}:role/ParlpodServiceRole" }
+      Role: { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/ParlpodServiceRole" }
       Runtime: python3.6
       Timeout: 900
       TracingConfig:
@@ -58,7 +58,7 @@ Resources:
       FunctionName: ParlpodDownload
       Handler: parlpod.lambda_download
       MemorySize: 1024
-      Role: { "Fn::Sub": "arn:aws:iam::${AWS:AccountId}:role/ParlpodServiceRole" }
+      Role: { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/ParlpodServiceRole" }
       Runtime: python3.6
       Timeout: 900
       TracingConfig:
