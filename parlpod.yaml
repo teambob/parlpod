@@ -10,6 +10,9 @@ Parameters:
   ParlpodDeploymentBucketnameParameter:
     Type: String
     Default: parlpod.datapunch.net-dev-deployment
+  ParlpodDeploymentKeyParameter:
+    Type: String
+    Default: parlpod-dev.zip
 Resources:
   ParlpodLayer:
     Type: "AWS::Lambda::LayerVersion"
@@ -19,7 +22,7 @@ Resources:
         - python3.7
       Content:
         S3Bucket: {Ref: ParlpodDeploymentBucketnameParameter}
-        S3Key: parlpod-dev.zip
+        S3Key: {Ref: ParlpodDeploymentKeyParameter}
       Description: Parlpod Layer
       LayerName: parlpod-layer
   ParlpodGetList:
@@ -27,7 +30,7 @@ Resources:
     Properties:
       Code:
         S3Bucket: {Ref: ParlpodDeploymentBucketnameParameter}
-        S3Key: parlpod-dev.zip
+        S3Key: {Ref: ParlpodDeploymentKeyParameter}
       Description: String
       Environment:
         Variables:
@@ -36,7 +39,7 @@ Resources:
       FunctionName: ParlpodGetList
       Handler: parlpod.lambda_get_list
       MemorySize: 1024
-      Role: arn:aws:iam::703961766271:role/ParlpodServiceRole
+      Role: arn:aws:iam:::role/ParlpodServiceRole
       Runtime: python3.6
       Timeout: 900
       TracingConfig:
@@ -46,7 +49,7 @@ Resources:
     Properties:
       Code:
         S3Bucket: {Ref: ParlpodDeploymentBucketnameParameter}
-        S3Key: parlpod-dev.zip
+        S3Key: {Ref: ParlpodDeploymentKeyParameter}
       Description: String
       Environment:
         Variables:
@@ -55,7 +58,7 @@ Resources:
       FunctionName: ParlpodDownload
       Handler: parlpod.lambda_download
       MemorySize: 1024
-      Role: arn:aws:iam::703961766271:role/ParlpodServiceRole
+      Role: arn:aws:iam:::role/ParlpodServiceRole
       Runtime: python3.6
       Timeout: 900
       TracingConfig:
@@ -65,7 +68,7 @@ Resources:
     Properties:
       Code:
         S3Bucket: {Ref: ParlpodDeploymentBucketnameParameter}
-        S3Key: parlpod-dev.zip
+        S3Key: {Ref: ParlpodDeploymentKeyParameter}
       Description: String
       Environment:
         Variables:
