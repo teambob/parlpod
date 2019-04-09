@@ -14,7 +14,7 @@ source dist/bin/activate
 pip3 install -r requirements.txt
 deactivate
 
-PACKAGES=$(echo dist/lib64/python3*/site-packages)
+PACKAGES=$(echo dist/lib/*/site-packages)
 if [ ! -d "$PACKAGES" ]
 then
 	echo "Error: directory $PACKAGES does not exist"

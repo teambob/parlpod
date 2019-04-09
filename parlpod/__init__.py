@@ -52,6 +52,10 @@ def lambda_create_rss(event, context):
 class Parlpod:
     def __init__(self, bucketName, httpPrefix, logLevel, dryRun):
         self.dryRun = dryRun
+        root = logging.getLogger()
+        if root.handlers:
+            for handler in root.handlers:
+                root.removeHandler(handler)
         logging.basicConfig(level=logLevel, format='%(asctime)s.%(msecs)03d %(levelname)s:\t%(message)s',
                             datefmt='%Y-%m-%d %H:%M:%S')
 
