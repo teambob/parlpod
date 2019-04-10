@@ -84,6 +84,7 @@ Resources:
   ParlpodStateMachine:
     Type: "AWS::StepFunctions::StateMachine"
     Properties:
+      StateMachineName: ParlpodStateMachine
       DefinitionString:
         !Sub
           |-

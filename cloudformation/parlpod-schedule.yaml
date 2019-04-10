@@ -1,0 +1,14 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Deploy parlpod to AWS"
+Resources:
+  ParlpodSchedule:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: "rate(1 day)"
+      State: ENABLED
+      Targets: [ {
+        "Arn": {"Fn::Sub": "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:ParlpodStateMachine"},
+        "Id": ParlpodStateMachine,
+        "RoleArn": { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/ParlpodScheduleRole" }
+      } ]
+

@@ -57,3 +57,25 @@ Resources:
           - lambda:InvokeFunction
           Resource:
           - "arn:aws:lambda:::function:Parlpod*"
+  ParlpodScheduleRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "ParlpodScheduleRole"
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+            - states:DescribeStateMachineForExecution
+            - states:DescribeStateMachine
+            - states:DescribeExecution
+            - states:ListExecutions
+            - states:GetExecutionHistory
+            - states:StartExecution
+            - states:ListTagsForResource
+            Resource:
+            - arn:aws:states:*:*:execution:ParlpodStateMachine:*
+            - arn:aws:states:*:*:stateMachine:ParlpodStateMachine
+          - Effect: Allow
+            Action: states:ListStateMachines
+            Resource: "*"
