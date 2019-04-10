@@ -11,9 +11,9 @@ class ParlViewClient:
         # ts2 seems unnecessary
         metadataResponse = requests.get('http://parlview.aph.gov.au/player/config5.php?siteID=1&videoID={videoId}&profileIdx=30&ts2=1528111836852'.format(videoId=videoId))
         root = etree.fromstring(metadataResponse.content)
-        duration = root.find('playlist/media/info/duration').text
+        duration = root.findtext('playlist/media/info/duration', '')
         created_date = dateutil.parser.parse(root.find('playlist/media/module/media_area/bookmark/created').text)
-        modified_date = dateutil.parser.parse(root.find('playlist/media/module/media_area/bookmark/modified').text)
+        modified_date = dateutil.parser.parse(root.findtext('playlist/media/module/media_area/bookmark/modified', created_date))
         return {'duration': duration, 'created_date': created_date, 'modified_date': modified_date}
 
     def download(self, videoId, duration, directory='.'):
