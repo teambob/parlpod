@@ -7,15 +7,15 @@ Parameters:
 Resources:
   ParlpodBucket:
     Type: "AWS::S3::Bucket"
-    BucketName: { "Fn::Ref": ParlpodBucketnameParameter }
-    AccessControl: PublicRead
-    WebsiteConfiguration:
-      IndexDocument: index.html
+    Properties:
+      BucketName: { "Fn::Ref": ParlpodBucketnameParameter }
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
   ParlpodBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket:
-        Ref: "ParlpodBucket"
+      Bucket: { "Fn::Ref": ParlpodBucketnameParameter }
       PolicyDocument:
         Statement:
           - Sid: Stmt1552298486748
