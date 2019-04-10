@@ -77,41 +77,6 @@ Resources:
             Effect: "Allow"
             Principal:
               Service:
-                - "stepfunctions.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-  ParlpodScheduleRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      RoleName: "ParlpodScheduleRole"
-      Policies:
-        -
-          PolicyName: ParlpodSchedulePolicy
-          PolicyDocument:
-            Version: '2012-10-17'
-            Statement:
-              - Effect: Allow
-                Action:
-                - states:DescribeStateMachineForExecution
-                - states:DescribeStateMachine
-                - states:DescribeExecution
-                - states:ListExecutions
-                - states:GetExecutionHistory
-                - states:StartExecution
-                - states:ListTagsForResource
-                Resource:
-                - arn:aws:states:*:*:execution:ParlpodStateMachine:*
-                - arn:aws:states:*:*:stateMachine:ParlpodStateMachine
-              - Effect: Allow
-                Action: states:ListStateMachines
-                Resource: "*"
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          -
-            Effect: "Allow"
-            Principal:
-              Service:
-                - "cloudwatchevents.amazonaws.com"
+                - "statemachine.amazonaws.com"
             Action:
               - "sts:AssumeRole"
