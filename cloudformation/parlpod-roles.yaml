@@ -69,7 +69,7 @@ Resources:
               Action:
               - lambda:InvokeFunction
               Resource:
-              - "arn:aws:lambda:::function:Parlpod*"
+              - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Parlpod*" }
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
