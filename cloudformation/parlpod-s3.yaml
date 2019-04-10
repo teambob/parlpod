@@ -7,8 +7,7 @@ Parameters:
 Resources:
   ParlpodBucket:
     Type: "AWS::S3::Bucket"
-    BucketName:
-      Ref: ParlpodBucketnameParameter
+    BucketName: { "Fn::Ref": ParlpodBucketnameParameter }
     AccessControl: PublicRead
     WebsiteConfiguration:
       IndexDocument: index.html
