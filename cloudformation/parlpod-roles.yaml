@@ -45,6 +45,16 @@ Resources:
                 Resource:
                   - {"Fn::Join": ["", ["arn:aws:s3:::", {Ref: ParlpodBucketnameParameter}]]}
                   - {"Fn::Join": ["", ["arn:aws:s3:::", {Ref: ParlpodBucketnameParameter}, "/*"]]}
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
   ParlpodStatesRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -60,6 +70,16 @@ Resources:
               - lambda:InvokeFunction
               Resource:
               - "arn:aws:lambda:::function:Parlpod*"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "stepfunctions.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
   ParlpodScheduleRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -85,3 +105,13 @@ Resources:
               - Effect: Allow
                 Action: states:ListStateMachines
                 Resource: "*"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -
+            Effect: "Allow"
+            Principal:
+              Service:
+                - "cloudwatchevents.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
