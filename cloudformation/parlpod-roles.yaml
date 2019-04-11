@@ -52,7 +52,7 @@ Resources:
                   - kms:ReEncrypt
                   - kms:DescribeKey
                 Resource:
-                - { "Fn::Sub": "arn:aws:kms:AWS_region:AWS_account_ID:alias/aws/lambda" }
+                  - { "Fn::Sub": "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/lambda" }
 
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
@@ -74,19 +74,19 @@ Resources:
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
-            - Effect: Allow
-              Action:
-              - lambda:InvokeFunction
-              Resource:
-              - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Parlpod*" }
-            - Effect: Allow
-              Action:
-                - kms:Encrypt
-                - kms:Decrypt
-                - kms:ReEncrypt
-                - kms:DescribeKey
-              Resource:
-              - { "Fn::Sub": "arn:aws:kms:AWS_region:AWS_account_ID:alias/aws/lambda" }
+              - Effect: Allow
+                Action:
+                - lambda:InvokeFunction
+                Resource:
+                - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Parlpod*" }
+              - Effect: Allow
+                Action:
+                  - kms:Encrypt
+                  - kms:Decrypt
+                  - kms:ReEncrypt
+                  - kms:DescribeKey
+                Resource:
+                  - { "Fn::Sub": "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:alias/aws/lambda" }
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
