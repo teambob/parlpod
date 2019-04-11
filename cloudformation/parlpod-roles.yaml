@@ -45,6 +45,15 @@ Resources:
                 Resource:
                   - {"Fn::Join": ["", ["arn:aws:s3:::", {Ref: ParlpodBucketnameParameter}]]}
                   - {"Fn::Join": ["", ["arn:aws:s3:::", {Ref: ParlpodBucketnameParameter}, "/*"]]}
+              - Effect: Allow
+                Action:
+                  - kms:Encrypt
+                  - kms:Decrypt
+                  - kms:ReEncrypt
+                  - kms:DescribeKey
+                Resource:
+                - { "Fn::Sub": "arn:aws:kms:AWS_region:AWS_account_ID:alias/aws/lambda" }
+
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -70,6 +79,14 @@ Resources:
               - lambda:InvokeFunction
               Resource:
               - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Parlpod*" }
+            - Effect: Allow
+              Action:
+                - kms:Encrypt
+                - kms:Decrypt
+                - kms:ReEncrypt
+                - kms:DescribeKey
+              Resource:
+              - { "Fn::Sub": "arn:aws:kms:AWS_region:AWS_account_ID:alias/aws/lambda" }
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
