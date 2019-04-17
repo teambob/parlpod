@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  build:
+    commands:
+       - bash create-lambda-zip.sh
+artifacts:
+  secondary-artifacts:
+    StaticArtifact:
+      name: StaticArtifact
+      base-directory: html
+      files:
+        - "*"
+    BuildArtifact:
+      base-directory: "dist/lib/*/site-packages"
+      files:
+        - "*"
+        - "**/*"
+      name: BuildArtifact
