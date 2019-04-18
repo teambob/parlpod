@@ -97,3 +97,28 @@ Resources:
                 - "states.amazonaws.com"
             Action:
               - "sts:AssumeRole"
+  ParlpodScheduleRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "ParlpodScheduleRole"
+      Policies:
+        -
+          PolicyName: ParlpodSchedulePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - states:ListStateMachines
+                  - states:ListActivities
+                  - states:ListExecutions
+                  - states:DescribeStateMachine
+                  - states:DescribeActivity
+                  - states:DescribeExecution
+                  - states:StartExecution
+                  - states:StopExecution
+                Resource:
+                  - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:stateMachine:Parlpod*" }
+                  - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:activity:Parlpod*" }
+                  - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:execution:Parlpod*:*" }
+
