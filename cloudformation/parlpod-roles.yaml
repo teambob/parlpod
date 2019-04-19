@@ -118,9 +118,9 @@ Resources:
                   - states:StartExecution
                   - states:StopExecution
                 Resource:
-                  - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:stateMachine:Parlpod*" }
-                  - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:activity:Parlpod*" }
-                  - { "Fn::Sub": "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:execution:Parlpod*:*" }
+                  - { "Fn::Sub": "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:Parlpod*" }
+                  - { "Fn::Sub": "arn:aws:states:${AWS::Region}:${AWS::AccountId}:activity:Parlpod*" }
+                  - { "Fn::Sub": "arn:aws:states:${AWS::Region}:${AWS::AccountId}:execution:Parlpod*:*" }
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
