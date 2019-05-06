@@ -31,4 +31,4 @@ class Amazon:
             self.s3.upload_file(Filename=filename, Bucket=self.bucketName, Key='media/{basename}'.format(basename=os.path.basename(filename)))
 
     def uploadRss(self, filename):
-        self.s3.upload_file(Filename=filename, Bucket=self.bucketName, Key='rss/{basename}'.format(basename=os.path.basename(filename)))
+        self.s3.upload_file(Filename=filename, Bucket=self.bucketName, Key='rss/{basename}'.format(basename=os.path.basename(filename)), ExtraArgs={'ContentType': 'application/rss+xml'})
