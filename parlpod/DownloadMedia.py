@@ -1,7 +1,9 @@
-from lxml import etree
+from bs4 import BeautifulSoup
+import datetime
 import dateutil.parser
 import logging
 import random
+import re
 import requests
 import os
 import time
@@ -9,15 +11,15 @@ import time
 
 class ParlViewClient:
     def getMetadata(self, videoId):
-        # ts2 seems unnecessary
-        metadataResponse = requests.get(
-            'https://parlview.aph.gov.au/player/config5.php?siteID=1&videoID={videoId}&profileIdx=30&ts2=1528111836852'.format(
-                videoId=videoId))
-        root = etree.fromstring(metadataResponse.content)
-        duration = root.findtext('playlist/media/info/duration', '')
-        created_date = dateutil.parser.parse(root.find('playlist/media/module/media_area/bookmark/created').text)
-        modified_date = dateutil.parser.parse(
-            root.findtext('playlist/media/module/media_area/bookmark/modified', created_date))
+        #return {'duration': 9999999, 'created_date': datetime.datetime.now(), 'modified_date': datetime.datetime.now()}
+
+        metadataResponse = requests.get("https://parlview.aph.gov.au/ajaxPlayer.php?videoID={videoId}&tabNum=4&action=loadTab&operation_mode=parlview".format(videoId=videoId))
+        metadataText = BeautifulSoup(metadataResponse.text, parser='html.parser').get_text()
+        duration = dateutil.parser.parse(re.search(r'Duration: (\S*)', metadataText).group(1))
+        created_date = dateutil.parser.parse(re.search(r'Record datetime: (\S*)', metadataText).group(1))
+        modified_date = created_date
+
+
         return {'duration': duration, 'created_date': created_date, 'modified_date': modified_date}
 
     def download(self, videoId, duration, directory='.'):
@@ -37,13 +39,14 @@ class ParlViewClient:
         download = None
         while True:
             try:
+                time.sleep(1)
                 download = requests.get(
                     'https://download-parlview.aph.gov.au/downloads/trim.php?mux=0&siteID=1&type=mp4_aud&videoID={videoId}&from=0&to={duration}&R={trimId}&action=directDownload'.format(
                         videoId=videoId, duration=duration, trimId=trimId))
             except requests.exceptions.RequestException as e:
                 logging.warning(e)
 
-            if len(download.content) > 0:
+            if len(download.content) > 0 and download.headers['content-type'] == 'audio/m4a':
                 break
             logging.info("Retrying")
             time.sleep(1)

@@ -13,5 +13,5 @@ if __name__=='__main__':
 
     options = parser.parse_args()
 
-    parlpod = Parlpod(options.bucket, options.http_prefix, options.dry_run, options.log_level)
+    parlpod = Parlpod(options.bucket, options.http_prefix, options.log_level, options.dry_run)
     parlpod.run()

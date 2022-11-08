@@ -1,7 +1,7 @@
+bs4
 requests
 boto3
 botocore
 bson
 feedparser
-lxml
 rfeed

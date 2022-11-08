@@ -1,4 +1,6 @@
 import base64
+import datetime
+
 import bson
 import itertools
 import logging
@@ -104,11 +106,13 @@ class Parlpod:
         missingVideoIds = list(set(videoIds).difference(self.amazon.checkVideoIds(videoIds)))
 
         # Download missing video IDs
-        logging.info('VideoIds required: %s', ', '.join(videoIds))
-        logging.info('VideoIds to download: %s', ', '.join(missingVideoIds))
+        logging.info('%i VideoIds required: %s', len(videoIds),', '.join(videoIds))
+        logging.info('%i VideoIds to download: %s', len(missingVideoIds), ', '.join(missingVideoIds))
 
         videoMetadata = {videoId: self.client.getMetadata(videoId) for videoId in videoIds}
-        return (podcastItems, missingVideoIds, videoMetadata)
+        skipVideoIds = [ videoId for videoId in videoIds if videoMetadata[videoId]['created_date']<datetime.datetime.now()-datetime.timedelta(days=30)]
+        logging.info('Skipping %i VideoIds: %s', len(skipVideoIds), ', '.join(skipVideoIds))
+        return ([[item for item in feed if item['video_id'] not in skipVideoIds] for feed in podcastItems], [id for id in missingVideoIds if id not in skipVideoIds], videoMetadata)
 
     def copyMedia(self, videoId, videoMetadata):
         self.client.download(videoId, videoMetadata['duration'], os.path.join(self.workingDir, 'media'))
