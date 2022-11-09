@@ -14,7 +14,7 @@ class ParlViewClient:
         #return {'duration': 9999999, 'created_date': datetime.datetime.now(), 'modified_date': datetime.datetime.now()}
 
         metadataResponse = requests.get("https://parlview.aph.gov.au/ajaxPlayer.php?videoID={videoId}&tabNum=4&action=loadTab&operation_mode=parlview".format(videoId=videoId))
-        metadataText = BeautifulSoup(metadataResponse.text, parser='html.parser').get_text()
+        metadataText = BeautifulSoup(metadataResponse.text, 'html.parser').get_text()
         duration = dateutil.parser.parse(re.search(r'Duration: (\S*)', metadataText).group(1))
         created_date = dateutil.parser.parse(re.search(r'Record datetime: (\S*)', metadataText).group(1))
         modified_date = created_date
