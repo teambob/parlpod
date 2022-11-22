@@ -26,7 +26,8 @@ class ParlViewClient:
         logging.info("Downloading videoId: %s", videoId)
 
         random.seed()
-        trimId = random.randrange(2 ** 32)
+        trimId = random.randrange(2 ** 16)
+        duration = 999999
 
         logging.debug("Duration: {duration}".format(duration=duration))
         requests.get(
