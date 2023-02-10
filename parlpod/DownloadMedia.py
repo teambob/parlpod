@@ -1,5 +1,4 @@
 from bs4 import BeautifulSoup
-import datetime
 import dateutil.parser
 import logging
 import random
@@ -11,12 +10,18 @@ import time
 
 class ParlViewClient:
     def getMetadata(self, videoId):
-        #return {'duration': 9999999, 'created_date': datetime.datetime.now(), 'modified_date': datetime.datetime.now()}
 
-        metadataResponse = requests.get("https://parlview.aph.gov.au/ajaxPlayer.php?videoID={videoId}&tabNum=4&action=loadTab&operation_mode=parlview".format(videoId=videoId))
-        metadataText = BeautifulSoup(metadataResponse.text, 'html.parser').get_text()
-        duration = dateutil.parser.parse(re.search(r'Duration: (\S*)', metadataText).group(1))
-        created_date = dateutil.parser.parse(re.search(r'Record datetime: (\S*)', metadataText).group(1))
+        metadataResponse = requests.get("https://parlview.aph.gov.au/mediaPlayer.php?videoID={videoId}".format(videoId=videoId))
+        metadataHtml = BeautifulSoup(metadataResponse.text, 'html.parser')
+        descriptionParagraphs = metadataHtml.select(".tag-description p")
+        descriptionParagraphTexts = [descriptionParagraph.get_text().replace("\n", "") for descriptionParagraph in descriptionParagraphs]
+        duration = next(match.group(1) for descriptionParagraphText in descriptionParagraphTexts if (match := re.match(r'^\s*Duration: (.*)$', descriptionParagraphText)))
+        if "currently being recorded" in duration:
+            duration = None
+        else:
+            duration = dateutil.parser.parse(duration)
+
+        created_date = dateutil.parser.parse(next(match.group(1) for descriptionParagraphText in descriptionParagraphTexts if (match := re.match(r'^\s*Record Datetime:\s*(.*)\s*$', descriptionParagraphText))))
         modified_date = created_date
 
 
