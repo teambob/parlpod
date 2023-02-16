@@ -15,11 +15,11 @@ class ParlViewClient:
         metadataHtml = BeautifulSoup(metadataResponse.text, 'html.parser')
         descriptionParagraphs = metadataHtml.select(".tag-description p")
         descriptionParagraphTexts = [descriptionParagraph.get_text().replace("\n", "") for descriptionParagraph in descriptionParagraphs]
-        duration = next(match.group(1) for descriptionParagraphText in descriptionParagraphTexts if (match := re.match(r'^\s*Duration: (.*)$', descriptionParagraphText)))
-        if "currently being recorded" in duration:
+        duration = next(match for descriptionParagraphText in descriptionParagraphTexts if (match := re.match(r'^\s*Duration:.*([0-9:]{8}).*$', descriptionParagraphText)))
+        if "currently being recorded" in duration.group(0):
             duration = None
         else:
-            duration = dateutil.parser.parse(duration)
+            duration = dateutil.parser.parse(duration.group(1))
 
         created_date = dateutil.parser.parse(next(match.group(1) for descriptionParagraphText in descriptionParagraphTexts if (match := re.match(r'^\s*Record Datetime:\s*(.*)\s*$', descriptionParagraphText))))
         modified_date = created_date
