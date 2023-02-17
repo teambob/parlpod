@@ -110,7 +110,7 @@ class Parlpod:
         logging.info('%i VideoIds to download: %s', len(missingVideoIds), ', '.join(missingVideoIds))
 
         videoMetadata = {videoId: self.client.getMetadata(videoId) for videoId in videoIds}
-        skipVideoIds = [ videoId for videoId in videoIds if videoMetadata[videoId]['duration'] and videoMetadata[videoId]['created_date']<datetime.datetime.now()-datetime.timedelta(days=30)]
+        skipVideoIds = [ videoId for videoId in videoIds if not videoMetadata[videoId]['duration'] and videoMetadata[videoId]['created_date']<datetime.datetime.now()-datetime.timedelta(days=30)]
         logging.info('Skipping %i VideoIds: %s', len(skipVideoIds), ', '.join(skipVideoIds))
         return ([[item for item in feed if item['video_id'] not in skipVideoIds] for feed in podcastItems], [id for id in missingVideoIds if id not in skipVideoIds], videoMetadata)
 
