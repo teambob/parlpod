@@ -91,6 +91,7 @@ Resources:
             {
                 "Comment": "Parlpod State Machine",
                 "StartAt": "ParlpodGetListState",
+                "TimeoutSeconds": 500,
                 "States": {
 
                     "ParlpodGetListState": {
